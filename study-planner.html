@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#7b2ff7">
+    <meta name="description" content="برنامه‌ریز هوشمند مطالعه - پایه دهم">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+    <title>برنامه‌ریز مطالعه - پایه دهم</title>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #00d4ff 0%, #7b2ff7 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #00d4ff 0%, #7b2ff7 100%);
+            color: white;
+            padding: 35px;
+            text-align: center;
+            position: relative;
+        }
+
+        .parent-control-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .parent-control-btn:hover {
+            background: white;
+            color: #7b2ff7;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f0f4ff;
+            border-bottom: 3px solid #e0e7ff;
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            background: transparent;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #4b5563;
+            min-width: 150px;
+        }
+
+        .tab:hover {
+            background: #e0e7ff;
+        }
+
+        .tab.active {
+            background: white;
+            color: #7b2ff7;
+            border-bottom: 3px solid #7b2ff7;
+        }
+
+        .content {
+            padding: 30px;
+            min-height: 500px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(123, 47, 247, 0.1);
+            border-right: 6px solid #00d4ff;
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(123, 47, 247, 0.2);
+        }
+
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .day-card {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe5ff 100%);
+            border-radius: 15px;
+            padding: 20px;
+            border: 2px solid #ffd6ff;
+        }
+
+        .day-card h3 {
+            color: #7b2ff7;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            font-weight: 700;
+        }
+
+        .course-item {
+            background: white;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-right: 4px solid #00d4ff;
+            box-shadow: 0 2px 8px rgba(0, 212, 255, 0.2);
+        }
+
+        .exam-list {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .exam-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .exam-card.urgent {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+            color: white;
+        }
+
+        .exam-card.soon {
+            background: linear-gradient(135deg, #ffd93d 0%, #ffb347 100%);
+            color: #333;
+        }
+
+        .exam-card.normal {
+            background: linear-gradient(135deg, #6bcf7f 0%, #4ecdc4 100%);
+            color: white;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 35px;
+            background: #f0f4ff;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: 10px 0;
+            border: 2px solid #e0e7ff;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff 0%, #7b2ff7 100%);
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1em;
+        }
+
+        .checklist {
+            margin-top: 15px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #f8faff;
+            border-radius: 10px;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .checklist-item:hover {
+            background: #e0e7ff;
+            border-color: #00d4ff;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            margin-left: 12px;
+            cursor: pointer;
+            accent-color: #7b2ff7;
+        }
+
+        .checklist-item.checked {
+            opacity: 0.7;
+            text-decoration: line-through;
+            background: #e8f5e9;
+        }
+
+        .checklist-item .timestamp {
+            font-size: 0.75em;
+            color: #666;
+            margin-right: auto;
+        }
+
+        button {
+            background: linear-gradient(135deg, #00d4ff 0%, #7b2ff7 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(123, 47, 247, 0.4);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid #e0e7ff;
+            border-radius: 10px;
+            font-size: 1em;
+            font-family: 'Vazirmatn', sans-serif;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #7b2ff7;
+            box-shadow: 0 0 0 3px rgba(123, 47, 247, 0.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 35px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #00d4ff 0%, #7b2ff7 100%);
+            color: white;
+            padding: 35px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(123, 47, 247, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .stat-card h2 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .stat-card p {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            padding: 18px;
+            background: #f8faff;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border-right: 5px solid #00d4ff;
+            transition: all 0.3s;
+        }
+
+        .timeline-item:hover {
+            background: #e0e7ff;
+            transform: translateX(-5px);
+        }
+
+        .study-plan-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .study-schedule {
+            background: #f8faff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .study-day {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 8px;
+            border-right: 3px solid #00d4ff;
+        }
+
+        .hours-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #00d4ff 0%, #7b2ff7 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .badge-general {
+            background: linear-gradient(135deg, #6bcf7f 0%, #4ecdc4 100%);
+            color: white;
+        }
+
+        .badge-specialized {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+            color: white;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe6f0 100%);
+            border: 2px solid #ffd6e8;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-box strong {
+            color: #ff6b9d;
+        }
+
+        .activity-log {
+            max-height: 400px;
+            overflow-y: auto;
+            background: #f8faff;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .activity-item {
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-right: 3px solid #00d4ff;
+        }
+
+        .activity-item.completed {
+            border-right-color: #6bcf7f;
+        }
+
+        .activity-item.uncompleted {
+            border-right-color: #ff6b9d;
+        }
+
+        .chart-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8faff;
+            border-radius: 15px;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            margin-top: 20px;
+        }
+
+        .bar {
+            flex: 1;
+            margin: 0 5px;
+            background: linear-gradient(135deg, #00d4ff 0%, #7b2ff7 100%);
+            border-radius: 5px 5px 0 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8em;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            width: 100%;
+            text-align: center;
+            font-weight: 700;
+            color: #7b2ff7;
+        }
+
+        .install-prompt {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #00d4ff 0%, #7b2ff7 100%);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 999;
+        }
+
+        .install-prompt.show {
+            display: block;
+            animation: slideUp 0.5s;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(100px); }
+            to { transform: translateX(-50%) translateY(0); }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .tabs, button, .modal, .parent-control-btn {
+                display: none !important;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .schedule-grid {
+                grid-template-columns: 1fr;
+            }
+            .parent-control-btn {
+                position: static;
+                display: block;
+                margin: 10px auto;
+            }
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .search-box {
+            margin: 20px 0;
+        }
+
+        .close-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+            float: left;
+            margin: 0;
+        }
+
+        .add-topic-btn {
+            background: linear-gradient(135deg, #6bcf7f 0%, #4ecdc4 100%);
+            font-size: 0.9em;
+            padding: 10px 20px;
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #ff6b9d 0%, #ffa06b 100%);
+            font-size: 0.9em;
+            padding: 10px 20px;
+        }
+
+        h2 {
+            color: #7b2ff7;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            color: #333;
+            font-weight: 700;
+        }
+
+        p {
+            line-height: 1.8;
+        }
+
+        strong {
+            font-weight: 700;
+            color: #7b2ff7;
+        }
+
+        .locked {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .lock-icon {
+            color: #ff6b9d;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="install-prompt" id="installPrompt">
+        📱 برای نصب این برنامه روی گوشی، دکمه "نصب" را بزنید
+        <button onclick="installApp()" style="margin-right:10px;padding:8px 16px;">نصب</button>
+        <button onclick="closeInstallPrompt()" class="close-btn" style="padding:8px 16px;">بستن</button>
+    </div>
+
+    <div class="container">
+        <header>
+            <button class="parent-control-btn" onclick="showParentPanel()">👨‍👩‍👦 کنترل والدین</button>
+            <h1>📚 برنامه‌ریز مطالعه - پایه دهم</h1>
+            <p>مدیریت هوشمند درس‌ها، امتحانات و برنامه مطالعه</p>
+            <p style="font-size:0.9em;margin-top:10px">⏰ برنامه از 5 خرداد 1405 | مطالعه روزانه: 5 ساعت</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('dashboard')">📊 داشبورد</button>
+            <button class="tab" onclick="showTab('schedule')">📅 برنامه هفتگی</button>
+            <button class="tab" onclick="showTab('exams')">📝 امتحانات</button>
+            <button class="tab" onclick="showTab('study')">📖 برنامه مطالعه</button>
+            <button class="tab" onclick="showTab('content')">✅ محتوای درسی</button>
+            <button class="tab" onclick="showTab('manage')">⚙️ مدیریت</button>
+        </div>
+
+        <div class="content">
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content active">
+                <h2>📊 آمار کلی</h2>
+                <div class="info-box">
+                    <strong>📅 شروع برنامه:</strong> 5 خرداد 1405<br>
+                    <strong>⏰ مطالعه روزانه:</strong> 5 ساعت<br>
+                    <strong>📚 کل ساعات مطالعه:</strong> <span id="totalStudyHours">0</span> ساعت
+                </div>
+                <div class="stats-grid" id="statsGrid"></div>
+                <div class="card">
+                    <h3>امتحانات نزدیک</h3>
+                    <div id="upcomingExams"></div>
+                </div>
+            </div>
+
+            <!-- Schedule Tab -->
+            <div id="schedule" class="tab-content">
+                <h2>📅 برنامه هفتگی کلاس‌ها</h2>
+                <div class="schedule-grid" id="scheduleGrid"></div>
+            </div>
+
+            <!-- Exams Tab -->
+            <div id="exams" class="tab-content">
+                <h2>📝 تقویم امتحانات نهایی</h2>
+                <div class="exam-list" id="examList"></div>
+            </div>
+
+            <!-- Study Plan Tab -->
+            <div id="study" class="tab-content">
+                <h2>📖 برنامه مطالعه تفصیلی</h2>
+                <div class="info-box">
+                    💡 <strong>نکته:</strong> برنامه از 5 خرداد شروع می‌شود و تا صبح روز امتحان ادامه دارد. روزانه 5 ساعت مطالعه برنامه‌ریزی شده است.
+                </div>
+                <div class="search-box">
+                    <input type="text" id="studySearch" placeholder="🔍 جستجوی درس..." onkeyup="filterStudyPlan()">
+                </div>
+                <div class="study-plan-grid" id="studyPlanGrid"></div>
+            </div>
+
+            <!-- Content Tab -->
+            <div id="content" class="tab-content">
+                <h2>✅ محتوای درسی</h2>
+                <div class="search-box">
+                    <input type="text" id="contentSearch" placeholder="🔍 جستجوی درس..." onkeyup="filterContent()">
+                </div>
+                <div id="contentGrid"></div>
+            </div>
+
+            <!-- Management Tab -->
+            <div id="manage" class="tab-content">
+                <h2>⚙️ مدیریت درس‌ها</h2>
+                <div class="btn-group">
+                    <button onclick="showAddCourseModal()" id="addCourseBtn">➕ افزودن درس جدید</button>
+                    <button onclick="exportData()">💾 خروجی داده‌ها</button>
+                    <button onclick="document.getElementById('importFile').click()">📥 وارد کردن داده‌ها</button>
+                    <button onclick="window.print()">🖨️ چاپ</button>
+                    <button onclick="resetAllData()" class="delete-btn" id="deleteAllBtn">🗑️ پاک کردن همه</button>
+                </div>
+                <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(event)">
+                <div id="coursesList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Parent Control Panel Modal -->
+    <div id="parentPanelModal" class="modal">
+        <div class="modal-content">
+            <h2>👨‍👩‍👦 پنل کنترل والدین</h2>
+            
+            <div id="parentLogin" style="display:block">
+                <p>برای دسترسی به پنل والدین، رمز عبور را وارد کنید:</p>
+                <input type="password" id="parentPassword" placeholder="رمز عبور (پیش‌فرض: 1234)">
+                <button onclick="loginParent()">ورود</button>
+                <button class="close-btn" onclick="closeModal('parentPanelModal')">بستن</button>
+            </div>
+
+            <div id="parentDashboard" style="display:none">
+                <h3>📊 گزارش عملکرد</h3>
+                
+                <div class="chart-container">
+                    <h4>نمودار پیشرفت هفتگی</h4>
+                    <div class="bar-chart" id="weeklyChart"></div>
+                </div>
+
+                <div class="card">
+                    <h3>📈 آمار کلی</h3>
+                    <div id="parentStats"></div>
+                </div>
+
+                <div class="card">
+                    <h3>📜 تاریخچه فعالیت (آخرین 20 مورد)</h3>
+                    <div class="activity-log" id="activityLog"></div>
+                </div>
+
+                <div class="card">
+                    <h3>⚙️ تنظیمات</h3>
+                    <label>
+                        <input type="checkbox" id="lockSettings" onchange="toggleLockSettings()">
+                        قفل تنظیمات (جلوگیری از تغییر توسط دانش‌آموز)
+                    </label>
+                    <br><br>
+                    <label>
+                        رمز عبور جدید:
+                        <input type="password" id="newParentPassword" placeholder="رمز جدید">
+                        <button onclick="changeParentPassword()">تغییر رمز</button>
+                    </label>
+                </div>
+
+                <button onclick="exportReport()">📧 خروجی گزارش کامل</button>
+                <button class="close-btn" onclick="logoutParent()">خروج</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Other Modals (same as before) -->
+    <div id="addCourseModal" class="modal">
+        <div class="modal-content">
+            <h2>افزودن درس جدید</h2>
+            <input type="text" id="courseName" placeholder="نام درس">
+            <select id="courseDay">
+                <option value="">انتخاب روز</option>
+                <option value="شنبه">شنبه</option>
+                <option value="یکشنبه">یکشنبه</option>
+                <option value="دوشنبه">دوشنبه</option>
+                <option value="سه‌شنبه">سه‌شنبه</option>
+                <option value="چهارشنبه">چهارشنبه</option>
+                <option value="پنج‌شنبه">پنج‌شنبه</option>
+            </select>
+            <input type="time" id="courseTime" value="08:00">
+            <label>تاریخ امتحان (شمسی):</label>
+            <input type="text" id="examDateShamsi" placeholder="مثال: 1405/03/09">
+            <select id="courseCategory">
+                <option value="عمومی">درس عمومی</option>
+                <option value="تخصصی">درس تخصصی</option>
+            </select>
+            <textarea id="courseTopics" placeholder="موضوعات درسی (هر موضوع در یک خط)" rows="6"></textarea>
+            <button onclick="addCourse()">افزودن درس</button>
+            <button class="close-btn" onclick="closeModal('addCourseModal')">بستن</button>
+        </div>
+    </div>
+
+    <div id="editExamModal" class="modal">
+        <div class="modal-content">
+            <h2>ویرایش تاریخ امتحان</h2>
+            <h3 id="editExamCourseName"></h3>
+            <label>تاریخ امتحان (شمسی):</label>
+            <input type="text" id="editExamDateShamsi" placeholder="1405/03/09">
+            <button onclick="saveExamDate()">ذخیره</button>
+            <button class="close-btn" onclick="closeModal('editExamModal')">بستن</button>
+        </div>
+    </div>
+
+    <div id="addTopicModal" class="modal">
+        <div class="modal-content">
+            <h2>افزودن موضوع جدید</h2>
+            <h3 id="addTopicCourseName"></h3>
+            <input type="text" id="newTopicName" placeholder="نام موضوع">
+            <button onclick="saveNewTopic()">افزودن</button>
+            <button class="close-btn" onclick="closeModal('addTopicModal')">بستن</button>
+        </div>
+    </div>
+
+    <script>
+        let courses = [];
+        let currentEditingCourse = null;
+        let activityHistory = [];
+        let parentSettings = {
+            password: '1234',
+            lockSettings: false
+        };
+        let deferredPrompt;
+
+        const STUDY_START_DATE = '2026-05-26';
+        const DAILY_STUDY_HOURS = 5;
+
+        // PWA Install
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').classList.add('show');
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('App installed');
+                    }
+                    deferredPrompt = null;
+                    closeInstallPrompt();
+                });
+            }
+        }
+
+        function closeInstallPrompt() {
+            document.getElementById('installPrompt').classList.remove('show');
+        }
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(function(registration) {
+                console.log('Service Worker registered');
+            });
+        }
+
+        // Notification Permission
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        // Send Daily Reminder
+        function sendDailyReminder() {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification('یادآور مطالعه', {
+                    body: 'وقت مطالعه است! امروز 5 ساعت برنامه داری 📚',
+                    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📚</text></svg>'
+                });
+            }
+        }
+
+        // Parent Panel Functions
+        function showParentPanel() {
+            document.getElementById('parentPanelModal').classList.add('active');
+        }
+
+        function loginParent() {
+            const password = document.getElementById('parentPassword').value;
+            if (password === parentSettings.password) {
+                document.getElementById('parentLogin').style.display = 'none';
+                document.getElementById('parentDashboard').style.display = 'block';
+                document.getElementById('lockSettings').checked = parentSettings.lockSettings;
+                renderParentDashboard();
+            } else {
+                alert('رمز عبور اشتباه است!');
+            }
+        }
+
+        function logoutParent() {
+            document.getElementById('parentLogin').style.display = 'block';
+            document.getElementById('parentDashboard').style.display = 'none';
+            document.getElementById('parentPassword').value = '';
+            closeModal('parentPanelModal');
+        }
+
+        function changeParentPassword() {
+            const newPassword = document.getElementById('newParentPassword').value;
+            if (newPassword.length < 4) {
+                alert('رمز عبور باید حداقل 4 کاراکتر باشد');
+                return;
+            }
+            parentSettings.password = newPassword;
+            localStorage.setItem('parentSettings', JSON.stringify(parentSettings));
+            alert('رمز عبور با موفقیت تغییر کرد');
+            document.getElementById('newParentPassword').value = '';
+        }
+
+        function toggleLockSettings() {
+            parentSettings.lockSettings = document.getElementById('lockSettings').checked;
+            localStorage.setItem('parentSettings', JSON.stringify(parentSettings));
+            applyLockSettings();
+        }
+
+        function applyLockSettings() {
+            const locked = parentSettings.lockSettings;
+            const elementsToLock = ['addCourseBtn', 'deleteAllBtn'];
+            
+            elementsToLock.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (locked) {
+                        el.classList.add('locked');
+                        el.innerHTML = '<span class="lock-icon">🔒</span>' + el.textContent.replace('🔒', '');
+                    } else {
+                        el.classList.remove('locked');
+                        el.innerHTML = el.textContent.replace('🔒', '');
+                    }
+                }
+            });
+        }
+
+        function logActivity(action, details) {
+            const activity = {
+                timestamp: new Date().toLocaleString('fa-IR'),
+                action: action,
+                details: details
+            };
+            activityHistory.unshift(activity);
+            if (activityHistory.length > 100) {
+                activityHistory = activityHistory.slice(0, 100);
+            }
+            localStorage.setItem('activityHistory', JSON.stringify(activityHistory));
+        }
+
+        function renderParentDashboard() {
+            // Stats
+            const totalTopics = courses.reduce((sum, c) => sum + c.topics.length, 0);
+            const completedTopics = courses.reduce((sum, c) => 
+                sum + c.topics.filter(t => t.completed).length, 0);
+            const progressPercent = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+
+            const today = new Date();
+            const completedToday = activityHistory.filter(a => {
+                const actDate = new Date(a.timestamp);
+                return actDate.toDateString() === today.toDateString() && a.action === 'completed';
+            }).length;
+
+            document.getElementById('parentStats').innerHTML = `
+                <p><strong>📊 پیشرفت کلی:</strong> ${progressPercent}% (${completedTopics} از ${totalTopics} موضوع)</p>
+                <p><strong>✅ امروز انجام شده:</strong> ${completedToday} موضوع</p>
+                <p><strong>📅 آخرین فعالیت:</strong> ${activityHistory.length > 0 ? activityHistory[0].timestamp : 'ندارد'}</p>
+            `;
+
+            // Weekly Chart
+            renderWeeklyChart();
+
+            // Activity Log
+            document.getElementById('activityLog').innerHTML = activityHistory.slice(0, 20).map(a => `
+                <div class="activity-item ${a.action}">
+                    <strong>${a.timestamp}</strong><br>
+                    ${a.details}
+                </div>
+            `).join('') || '<p>فعالیتی ثبت نشده است</p>';
+        }
+
+        function renderWeeklyChart() {
+            const last7Days = [];
+            const today = new Date();
+            
+            for (let i = 6; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                const dateStr = date.toLocaleDateString('fa-IR', { month: 'numeric', day: 'numeric' });
+                const count = activityHistory.filter(a => {
+                    const actDate = new Date(a.timestamp);
+                    return actDate.toDateString() === date.toDateString() && a.action === 'completed';
+                }).length;
+                last7Days.push({ date: dateStr, count });
+            }
+
+            const maxCount = Math.max(...last7Days.map(d => d.count), 1);
+            
+            document.getElementById('weeklyChart').innerHTML = last7Days.map(day => `
+                <div class="bar" style="height: ${(day.count / maxCount) * 100}%">
+                    <div class="bar-value">${day.count}</div>
+                    <div class="bar-label">${day.date}</div>
+                </div>
+            `).join('');
+        }
+
+        function exportReport() {
+            const report = {
+                exportDate: new Date().toLocaleString('fa-IR'),
+                courses: courses,
+                activityHistory: activityHistory,
+                statistics: {
+                    totalCourses: courses.length,
+                    totalTopics: courses.reduce((sum, c) => sum + c.topics.length, 0),
+                    completedTopics: courses.reduce((sum, c) => sum + c.topics.filter(t => t.completed).length, 0)
+                }
+            };
+
+            const dataStr = JSON.stringify(report, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `parent-report-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        // Date conversion functions
+        function shamsiToGregorian(shamsiDate) {
+            const parts = shamsiDate.split('/');
+            const year = parseInt(parts[0]);
+            const month = parseInt(parts[1]);
+            const day = parseInt(parts[2]);
+            
+            const gregorianYear = year - 1383 + 2004;
+            let gregorianMonth = month + 2;
+            if (gregorianMonth > 12) {
+                gregorianMonth -= 12;
+            }
+            
+            return `${gregorianYear}-${String(gregorianMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+
+        function calculateStudyDays(examDate) {
+            const start = new Date(STUDY_START_DATE);
+            const exam = new Date(examDate);
+            const diffTime = exam - start;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        function calculateStudyHours(examDate) {
+            const days = calculateStudyDays(examDate);
+            return days * DAILY_STUDY_HOURS;
+        }
+
+        function generateStudySchedule(course) {
+            const start = new Date(STUDY_START_DATE);
+            const exam = new Date(course.examDate);
+            const totalDays = calculateStudyDays(course.examDate);
+            const totalHours = calculateStudyHours(course.examDate);
+            const hoursPerTopic = course.topics.length > 0 ? Math.floor(totalHours / course.topics.length) : 0;
+            
+            let schedule = [];
+            let currentDate = new Date(start);
+            let topicIndex = 0;
+            let hoursSpent = 0;
+            
+            for (let day = 0; day < totalDays; day++) {
+                const dateStr = currentDate.toLocaleDateString('fa-IR');
+                const topic = course.topics[topicIndex];
+                
+                if (topic) {
+                    schedule.push({
+                        date: dateStr,
+                        topic: topic.name,
+                        hours: DAILY_STUDY_HOURS,
+                        day: day + 1
+                    });
+                    
+                    hoursSpent += DAILY_STUDY_HOURS;
+                    if (hoursSpent >= hoursPerTopic && topicIndex < course.topics.length - 1) {
+                        topicIndex++;
+                        hoursSpent = 0;
+                    }
+                }
+                
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            
+            return schedule;
+        }
+
+        function initSampleData() {
+            const saved = localStorage.getItem('studyPlannerData');
+            const savedActivity = localStorage.getItem('activityHistory');
+            const savedParentSettings = localStorage.getItem('parentSettings');
+            
+            if (savedActivity) {
+                activityHistory = JSON.parse(savedActivity);
+            }
+            
+            if (savedParentSettings) {
+                parentSettings = JSON.parse(savedParentSettings);
+            }
+            
+            if (saved) {
+                courses = JSON.parse(saved);
+            } else {
+                courses = [
+                    {
+                        id: 1,
+                        name: 'دینی و اخلاق 1',
+                        category: 'عمومی',
+                        day: 'شنبه',
+                        time: '08:00',
+                        examDate: '2026-05-30',
+                        examDateShamsi: '1405/03/09',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'جهان‌بینی توحیدی', completed: false, completedAt: null },
+                            { name: 'معرفت‌شناسی', completed: false, completedAt: null },
+                            { name: 'اخلاق اسلامی', completed: false, completedAt: null },
+                            { name: 'مرور کلی', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        name: 'فیزیک 1',
+                        category: 'تخصصی',
+                        day: 'دوشنبه',
+                        time: '10:00',
+                        examDate: '2026-06-01',
+                        examDateShamsi: '1405/03/11',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'فصل 1 - فیزیک و اندازه‌گیری', completed: false, completedAt: null },
+                            { name: 'فصل 2 - حرکت شناسی', completed: false, completedAt: null },
+                            { name: 'فصل 3 - نیرو و حرکت', completed: false, completedAt: null },
+                            { name: 'فصل 4 - کار و انرژی', completed: false, completedAt: null },
+                            { name: 'حل تمرین و مسائل', completed: false, completedAt: null },
+                            { name: 'مرور نهایی', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        name: 'ریاضی و آمار 1',
+                        category: 'تخصصی',
+                        day: 'دوشنبه',
+                        time: '08:00',
+                        examDate: '2026-06-01',
+                        examDateShamsi: '1405/03/11',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'فصل 1 - مجموعه‌ها', completed: false, completedAt: null },
+                            { name: 'فصل 2 - مثلثات', completed: false, completedAt: null },
+                            { name: 'فصل 3 - توابع', completed: false, completedAt: null },
+                            { name: 'فصل 4 - معادلات', completed: false, completedAt: null },
+                            { name: 'تمرین‌های تکمیلی', completed: false, completedAt: null },
+                            { name: 'مرور و تست', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        name: 'نگارش 1',
+                        category: 'عمومی',
+                        day: 'سه‌شنبه',
+                        time: '13:00',
+                        examDate: '2026-06-02',
+                        examDateShamsi: '1405/03/12',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'انشا و نگارش', completed: false, completedAt: null },
+                            { name: 'انواع متن', completed: false, completedAt: null },
+                            { name: 'املا و نگارش', completed: false, completedAt: null },
+                            { name: 'تمرین نوشتن', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        name: 'فارسی 1',
+                        category: 'عمومی',
+                        day: 'شنبه',
+                        time: '08:00',
+                        examDate: '2026-06-03',
+                        examDateShamsi: '1405/03/13',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'درس 1 - آفرینش', completed: false, completedAt: null },
+                            { name: 'درس 2 - دانش و اندیشه', completed: false, completedAt: null },
+                            { name: 'درس 3 - ادبیات فارسی', completed: false, completedAt: null },
+                            { name: 'درس 4 - شعر و ادب', completed: false, completedAt: null },
+                            { name: 'املا و آرایه‌های ادبی', completed: false, completedAt: null },
+                            { name: 'مرور کلی', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        name: 'هندسه 1',
+                        category: 'تخصصی',
+                        day: 'دوشنبه',
+                        time: '10:30',
+                        examDate: '2026-06-06',
+                        examDateShamsi: '1405/03/16',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'فصل 1 - اثبات در هندسه', completed: false, completedAt: null },
+                            { name: 'فصل 2 - قضایای مثلث', completed: false, completedAt: null },
+                            { name: 'فصل 3 - چند ضلعی‌ها', completed: false, completedAt: null },
+                            { name: 'فصل 4 - دایره', completed: false, completedAt: null },
+                            { name: 'حل تمرین', completed: false, completedAt: null },
+                            { name: 'مرور نهایی', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 7,
+                        name: 'جغرافیا 1',
+                        category: 'عمومی',
+                        day: 'یکشنبه',
+                        time: '10:00',
+                        examDate: '2026-06-07',
+                        examDateShamsi: '1405/03/17',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'جغرافیای طبیعی', completed: false, completedAt: null },
+                            { name: 'جغرافیای انسانی', completed: false, completedAt: null },
+                            { name: 'نقشه‌خوانی', completed: false, completedAt: null },
+                            { name: 'مرور', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 8,
+                        name: 'آمادگی دفاعی 1',
+                        category: 'عمومی',
+                        day: 'پنج‌شنبه',
+                        time: '08:00',
+                        examDate: '2026-06-08',
+                        examDateShamsi: '1405/03/18',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'دفاع مقدس', completed: false, completedAt: null },
+                            { name: 'امنیت ملی', completed: false, completedAt: null },
+                            { name: 'آمادگی جسمانی', completed: false, completedAt: null },
+                            { name: 'مرور', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 9,
+                        name: 'عربی 1',
+                        category: 'عمومی',
+                        day: 'یکشنبه',
+                        time: '09:00',
+                        examDate: '2026-06-09',
+                        examDateShamsi: '1405/03/19',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'درس 1 - القراءة', completed: false, completedAt: null },
+                            { name: 'درس 2 - العلم', completed: false, completedAt: null },
+                            { name: 'درس 3 - الثقافة', completed: false, completedAt: null },
+                            { name: 'قواعد و صرف', completed: false, completedAt: null },
+                            { name: 'ترجمه و لغت', completed: false, completedAt: null },
+                            { name: 'مرور', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 10,
+                        name: 'زبان خارجه 1 (انگلیسی)',
+                        category: 'عمومی',
+                        day: 'شنبه',
+                        time: '10:30',
+                        examDate: '2026-06-10',
+                        examDateShamsi: '1405/03/20',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'Lesson 1 - Personality', completed: false, completedAt: null },
+                            { name: 'Lesson 2 - Travel', completed: false, completedAt: null },
+                            { name: 'Lesson 3 - Technology', completed: false, completedAt: null },
+                            { name: 'Grammar Review', completed: false, completedAt: null },
+                            { name: 'Vocabulary & Writing', completed: false, completedAt: null },
+                            { name: 'Final Review', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 11,
+                        name: 'تفکر و سواد رسانه‌ای',
+                        category: 'عمومی',
+                        day: 'سه‌شنبه',
+                        time: '09:00',
+                        examDate: '2026-06-11',
+                        examDateShamsi: '1405/03/21',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'تفکر انتقادی', completed: false, completedAt: null },
+                            { name: 'سواد رسانه‌ای', completed: false, completedAt: null },
+                            { name: 'تحلیل محتوا', completed: false, completedAt: null },
+                            { name: 'مرور', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 12,
+                        name: 'ریاضی 1',
+                        category: 'تخصصی',
+                        day: 'یکشنبه',
+                        time: '08:00',
+                        examDate: '2026-06-12',
+                        examDateShamsi: '1405/03/22',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'فصل 1 - مجموعه‌ها', completed: false, completedAt: null },
+                            { name: 'فصل 2 - مثلثات', completed: false, completedAt: null },
+                            { name: 'فصل 3 - توابع', completed: false, completedAt: null },
+                            { name: 'فصل 4 - معادلات', completed: false, completedAt: null },
+                            { name: 'فصل 5 - نامعادلات', completed: false, completedAt: null },
+                            { name: 'تمرین‌های تکمیلی', completed: false, completedAt: null },
+                            { name: 'مرور و تست نهایی', completed: false, completedAt: null }
+                        ]
+                    },
+                    {
+                        id: 13,
+                        name: 'شیمی 1',
+                        category: 'تخصصی',
+                        day: 'سه‌شنبه',
+                        time: '08:00',
+                        examDate: '2026-06-15',
+                        examDateShamsi: '1405/03/25',
+                        examTime: '08:00',
+                        topics: [
+                            { name: 'فصل 1 - زبان شیمی', completed: false, completedAt: null },
+                            { name: 'فصل 2 - ساختار اتم', completed: false, completedAt: null },
+                            { name: 'فصل 3 - جدول تناوبی', completed: false, completedAt: null },
+                            { name: 'فصل 4 - پیوند شیمیایی', completed: false, completedAt: null },
+                            { name: 'آزمایش‌های عملی', completed: false, completedAt: null },
+                            { name: 'حل تمرین', completed: false, completedAt: null },
+                            { name: 'مرور نهایی', completed: false, completedAt: null }
+                        ]
+                    }
+                ];
+                saveData();
+            }
+            
+            applyLockSettings();
+            requestNotificationPermission();
+            renderAll();
+        }
+
+        function saveData() {
+            localStorage.setItem('studyPlannerData', JSON.stringify(courses));
+        }
+
+        function renderAll() {
+            renderDashboard();
+            renderSchedule();
+            renderExams();
+            renderStudyPlan();
+            renderContent();
+            renderCoursesList();
+        }
+
+        function renderDashboard() {
+            const totalCourses = courses.length;
+            const totalTopics = courses.reduce((sum, c) => sum + c.topics.length, 0);
+            const completedTopics = courses.reduce((sum, c) => 
+                sum + c.topics.filter(t => t.completed).length, 0);
+            const avgProgress = totalTopics > 0 ? Math.round((completedTopics / totalTopics) * 100) : 0;
+            
+            const lastExam = courses.reduce((latest, course) => {
+                return new Date(course.examDate) > new Date(latest.examDate) ? course : latest;
+            }, courses[0]);
+            
+            const totalStudyDays = calculateStudyDays(lastExam.examDate);
+            const totalStudyHours = totalStudyDays * DAILY_STUDY_HOURS;
+            
+            document.getElementById('totalStudyHours').textContent = totalStudyHours;
+            
+            const upcomingExams = courses
+                .filter(c => c.examDate)
+                .sort((a, b) => new Date(a.examDate) - new Date(b.examDate))
+                .slice(0, 5);
+
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card">
+                    <h2>${totalCourses}</h2>
+                    <p>تعداد درس‌ها</p>
+                </div>
+                <div class="stat-card">
+                    <h2>${totalTopics}</h2>
+                    <p>کل موضوعات</p>
+                </div>
+                <div class="stat-card">
+                    <h2>${completedTopics}</h2>
+                    <p>موضوعات مطالعه شده</p>
+                </div>
+                <div class="stat-card">
+                    <h2>${avgProgress}%</h2>
+                    <p>پیشرفت کلی</p>
+                </div>
+            `;
+
+            document.getElementById('upcomingExams').innerHTML = upcomingExams.map(course => {
+                const daysLeft = getDaysUntilExam(course.examDate);
+                const studyHours = calculateStudyHours(course.examDate);
+                const badge = course.category === 'عمومی' ? 
+                    '<span class="category-badge badge-general">عمومی</span>' : 
+                    '<span class="category-badge badge-specialized">تخصصی</span>';
+                return `
+                    <div class="timeline-item">
+                        ${badge}
+                        <strong>${course.name}</strong><br>
+                        📅 ${course.examDateShamsi} (ساعت ${course.examTime}) | ⏰ ${daysLeft} روز مانده<br>
+                        <span class="hours-badge">${studyHours} ساعت مطالعه</span>
+                    </div>
+                `;
+            }).join('') || '<p>امتحانی ثبت نشده است</p>';
+        }
+
+        function renderSchedule() {
+            const days = ['شنبه', 'یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه'];
+            const scheduleByDay = {};
+            
+            days.forEach(day => scheduleByDay[day] = []);
+            courses.forEach(course => {
+                if (course.day) {
+                    scheduleByDay[course.day].push(course);
+                }
+            });
+
+            document.getElementById('scheduleGrid').innerHTML = days.map(day => `
+                <div class="day-card">
+                    <h3>${day}</h3>
+                    ${scheduleByDay[day].sort((a, b) => a.time.localeCompare(b.time)).map(course => {
+                        const badge = course.category === 'عمومی' ? 
+                            '<span class="category-badge badge-general">عمومی</span>' : 
+                            '<span class="category-badge badge-specialized">تخصصی</span>';
+                        return `
+                        <div class="course-item">
+                            ${badge}<br>
+                            <strong>${course.name}</strong><br>
+                            🕐 ${course.time}
+                        </div>
+                    `}).join('') || '<p style="text-align:center;color:#999;">کلاسی ثبت نشده</p>'}
+                </div>
+            `).join('');
+        }
+
+        function getDaysUntilExam(examDate) {
+            const today = new Date();
+            const exam = new Date(examDate);
+            const diff = Math.ceil((exam - today) / (1000 * 60 * 60 * 24));
+            return diff;
+        }
+
+        function getExamClass(days) {
+            if (days < 0) return 'urgent';
+            if (days <= 7) return 'urgent';
+            if (days <= 14) return 'soon';
+            return 'normal';
+        }
+
+        function renderExams() {
+            const sorted = courses
+                .filter(c => c.examDate)
+                .sort((a, b) => new Date(a.examDate) - new Date(b.examDate));
+
+            document.getElementById('examList').innerHTML = sorted.map(course => {
+                const daysLeft = getDaysUntilExam(course.examDate);
+                const studyHours = calculateStudyHours(course.examDate);
+                const className = getExamClass(daysLeft);
+                const status = daysLeft < 0 ? 'گذشته' : `${daysLeft} روز مانده`;
+                const badge = course.category === 'عمومی' ? 
+                    '<span class="category-badge badge-general">عمومی</span>' : 
+                    '<span class="category-badge badge-specialized">تخصصی</span>';
+                
+                return `
+                    <div class="exam-card ${className}">
+                        <div>
+                            ${badge}
+                            <h3>${course.name}</h3>
+                            <p>📅 ${course.examDateShamsi} | 🕐 ساعت ${course.examTime}</p>
+                            <span class="hours-badge">${studyHours} ساعت مطالعه</span>
+                        </div>
+                        <div style="text-align:center">
+                            <h2>${status}</h2>
+                            <button onclick="editExamDate(${course.id})" style="background:white;color:#7b2ff7;margin-top:10px" class="${parentSettings.lockSettings ? 'locked' : ''}">ویرایش</button>
+                        </div>
+                    </div>
+                `;
+            }).join('') || '<p>امتحانی ثبت نشده است</p>';
+        }
+
+        function renderStudyPlan() {
+            document.getElementById('studyPlanGrid').innerHTML = courses.map(course => {
+                const badge = course.category === 'عمومی' ? 
+                    '<span class="category-badge badge-general">عمومی</span>' : 
+                    '<span class="category-badge badge-specialized">تخصصی</span>';
+                    
+                if (!course.examDate) {
+                    return `
+                        <div class="card">
+                            ${badge}
+                            <h3>${course.name}</h3>
+                            <p>برنامه مطالعه تنظیم نشده است</p>
+                        </div>
+                    `;
+                }
+
+                const totalDays = calculateStudyDays(course.examDate);
+                const totalHours = calculateStudyHours(course.examDate);
+                const schedule = generateStudySchedule(course);
+                const today = new Date();
+                const start = new Date(STUDY_START_DATE);
+                const passedDays = Math.ceil((today - start) / (1000 * 60 * 60 * 24));
+                const progress = Math.max(0, Math.min(100, Math.round((passedDays / totalDays) * 100)));
+
+                return `
+                    <div class="card">
+                        ${badge}
+                        <h3>${course.name}</h3>
+                        <p>📅 شروع: 1405/03/05 | امتحان: ${course.examDateShamsi} (ساعت ${course.examTime})</p>
+                        <p>⏰ ${totalDays} روز مطالعه | <strong>${totalHours} ساعت</strong> (${DAILY_STUDY_HOURS} ساعت/روز)</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:${progress}%">${progress}%</div>
+                        </div>
+                        <div class="study-schedule">
+                            <h4 style="margin-bottom:10px">📋 برنامه تفصیلی مطالعه:</h4>
+                            ${schedule.slice(0, 10).map(item => `
+                                <div class="study-day">
+                                    <strong>روز ${item.day}</strong> - ${item.date}<br>
+                                    📖 ${item.topic}<br>
+                                    <span class="hours-badge">${item.hours} ساعت</span>
+                                </div>
+                            `).join('')}
+                            ${schedule.length > 10 ? `<p style="text-align:center;margin-top:10px;color:#666;">... و ${schedule.length - 10} روز دیگر</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderContent() {
+            document.getElementById('contentGrid').innerHTML = courses.map(course => {
+                const completed = course.topics.filter(t => t.completed).length;
+                const total = course.topics.length;
+                const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+                const studyHours = calculateStudyHours(course.examDate);
+                const badge = course.category === 'عمومی' ? 
+                    '<span class="category-badge badge-general">عمومی</span>' : 
+                    '<span class="category-badge badge-specialized">تخصصی</span>';
+
+                return `
+                    <div class="card">
+                        ${badge}
+                        <h3>${course.name}</h3>
+                        <p><small>📅 امتحان: ${course.examDateShamsi} ساعت ${course.examTime}</small></p>
+                        <p><small><span class="hours-badge">${studyHours} ساعت مطالعه</span></small></p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width:${percentage}%">${percentage}% - ${completed}/${total}</div>
+                        </div>
+                        <div class="checklist">
+                            ${course.topics.map((topic, index) => `
+                                <div class="checklist-item ${topic.completed ? 'checked' : ''}">
+                                    <input type="checkbox" 
+                                           ${topic.completed ? 'checked' : ''} 
+                                           onchange="toggleTopic(${course.id}, ${index})">
+                                    <span>${topic.name}</span>
+                                    ${topic.completedAt ? `<span class="timestamp">${topic.completedAt}</span>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="add-topic-btn" onclick="showAddTopicModal(${course.id})" class="${parentSettings.lockSettings ? 'locked' : ''}">➕ افزودن موضوع</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderCoursesList() {
+            document.getElementById('coursesList').innerHTML = courses.map(course => {
+                const studyHours = calculateStudyHours(course.examDate);
+                const badge = course.category === 'عمومی' ? 
+                    '<span class="category-badge badge-general">عمومی</span>' : 
+                    '<span class="category-badge badge-specialized">تخصصی</span>';
+                    
+                return `
+                <div class="card">
+                    ${badge}
+                    <h3>${course.name}</h3>
+                    <p>🗓️ ${course.day || 'نامشخص'} | 🕐 ${course.time || 'نامشخص'}</p>
+                    <p>📝 امتحان: ${course.examDateShamsi || 'تنظیم نشده'} ساعت ${course.examTime || '08:00'}</p>
+                    <p>⏰ ساعات مطالعه: <strong>${studyHours} ساعت</strong></p>
+                    <p>✅ موضوعات: ${course.topics.length}</p>
+                    <button onclick="deleteCourse(${course.id})" class="delete-btn ${parentSettings.lockSettings ? 'locked' : ''}">حذف درس</button>
+                </div>
+            `}).join('');
+        }
+
+        function toggleTopic(courseId, topicIndex) {
+            const course = courses.find(c => c.id === courseId);
+            const topic = course.topics[topicIndex];
+            topic.completed = !topic.completed;
+            
+            if (topic.completed) {
+                topic.completedAt = new Date().toLocaleString('fa-IR');
+                logActivity('completed', `✅ ${course.name}: ${topic.name}`);
+            } else {
+                topic.completedAt = null;
+                logActivity('uncompleted', `❌ ${course.name}: ${topic.name}`);
+            }
+            
+            saveData();
+            renderAll();
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function showAddCourseModal() {
+            if (parentSettings.lockSettings) {
+                alert('این قابلیت توسط والدین قفل شده است');
+                return;
+            }
+            document.getElementById('addCourseModal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function addCourse() {
+            const name = document.getElementById('courseName').value;
+            const day = document.getElementById('courseDay').value;
+            const time = document.getElementById('courseTime').value;
+            const examDateShamsi = document.getElementById('examDateShamsi').value;
+            const category = document.getElementById('courseCategory').value;
+            const topicsText = document.getElementById('courseTopics').value;
+
+            if (!name) {
+                alert('لطفاً نام درس را وارد کنید');
+                return;
+            }
+
+            const topics = topicsText.split('\n')
+                .filter(t => t.trim())
+                .map(t => ({ name: t.trim(), completed: false, completedAt: null }));
+
+            const examDate = examDateShamsi ? shamsiToGregorian(examDateShamsi) : '';
+
+            const newCourse = {
+                id: Date.now(),
+                name,
+                category,
+                day,
+                time,
+                examDate,
+                examDateShamsi,
+                examTime: '08:00',
+                topics
+            };
+
+            courses.push(newCourse);
+            logActivity('add_course', `➕ درس جدید اضافه شد: ${name}`);
+            saveData();
+            renderAll();
+            closeModal('addCourseModal');
+            
+            document.getElementById('courseName').value = '';
+            document.getElementById('courseDay').value = '';
+            document.getElementById('courseTime').value = '08:00';
+            document.getElementById('examDateShamsi').value = '';
+            document.getElementById('courseCategory').value = 'عمومی';
+            document.getElementById('courseTopics').value = '';
+        }
+
+        function deleteCourse(courseId) {
+            if (parentSettings.lockSettings) {
+                alert('این قابلیت توسط والدین قفل شده است');
+                return;
+            }
+            
+            const course = courses.find(c => c.id === courseId);
+            if (confirm(`آیا مطمئن هستید که می‌خواهید درس "${course.name}" را حذف کنید؟`)) {
+                logActivity('delete_course', `🗑️ درس حذف شد: ${course.name}`);
+                courses = courses.filter(c => c.id !== courseId);
+                saveData();
+                renderAll();
+            }
+        }
+
+        function editExamDate(courseId) {
+            if (parentSettings.lockSettings) {
+                alert('این قابلیت توسط والدین قفل شده است');
+                return;
+            }
+            
+            currentEditingCourse = courseId;
+            const course = courses.find(c => c.id === courseId);
+            document.getElementById('editExamCourseName').textContent = course.name;
+            document.getElementById('editExamDateShamsi').value = course.examDateShamsi || '';
+            document.getElementById('editExamModal').classList.add('active');
+        }
+
+        function saveExamDate() {
+            const course = courses.find(c => c.id === currentEditingCourse);
+            const oldDate = course.examDateShamsi;
+            const examDateShamsi = document.getElementById('editExamDateShamsi').value;
+            course.examDateShamsi = examDateShamsi;
+            course.examDate = shamsiToGregorian(examDateShamsi);
+            logActivity('edit_exam', `📝 تاریخ امتحان ${course.name} تغییر کرد: ${oldDate} → ${examDateShamsi}`);
+            saveData();
+            renderAll();
+            closeModal('editExamModal');
+        }
+
+        function showAddTopicModal(courseId) {
+            if (parentSettings.lockSettings) {
+                alert('این قابلیت توسط والدین قفل شده است');
+                return;
+            }
+            
+            currentEditingCourse = courseId;
+            const course = courses.find(c => c.id === courseId);
+            document.getElementById('addTopicCourseName').textContent = course.name;
+            document.getElementById('newTopicName').value = '';
+            document.getElementById('addTopicModal').classList.add('active');
+        }
+
+        function saveNewTopic() {
+            const topicName = document.getElementById('newTopicName').value.trim();
+            if (!topicName) {
+                alert('لطفاً نام موضوع را وارد کنید');
+                return;
+            }
+            
+            const course = courses.find(c => c.id === currentEditingCourse);
+            course.topics.push({ name: topicName, completed: false, completedAt: null });
+            logActivity('add_topic', `➕ موضوع جدید در ${course.name}: ${topicName}`);
+            saveData();
+            renderAll();
+            closeModal('addTopicModal');
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(courses, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `study-planner-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (confirm('آیا می‌خواهید داده‌های فعلی را با داده‌های وارد شده جایگزین کنید؟')) {
+                        courses = imported;
+                        logActivity('import_data', '📥 داده‌ها از فایل وارد شدند');
+                        saveData();
+                        renderAll();
+                        alert('داده‌ها با موفقیت وارد شدند');
+                    }
+                } catch (error) {
+                    alert('خطا در خواندن فایل');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetAllData() {
+            if (parentSettings.lockSettings) {
+                alert('این قابلیت توسط والدین قفل شده است');
+                return;
+            }
+            
+            if (confirm('آیا مطمئن هستید که می‌خواهید همه داده‌ها را پاک کنید؟ این عمل قابل بازگشت نیست!')) {
+                if (confirm('آیا واقعاً مطمئن هستید؟')) {
+                    localStorage.removeItem('studyPlannerData');
+                    logActivity('reset_all', '🗑️ همه داده‌ها پاک شدند');
+                    courses = [];
+                    renderAll();
+                    alert('همه داده‌ها پاک شدند');
+                }
+            }
+        }
+
+        function filterStudyPlan() {
+            const search = document.getElementById('studySearch').value.toLowerCase();
+            const cards = document.querySelectorAll('#studyPlanGrid .card');
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(search) ? 'block' : 'none';
+            });
+        }
+
+        function filterContent() {
+            const search = document.getElementById('contentSearch').value.toLowerCase();
+            const cards = document.querySelectorAll('#contentGrid .card');
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(search) ? 'block' : 'none';
+            });
+        }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+
+        // Set daily reminder at 8 AM
+        setInterval(() => {
+            const now = new Date();
+            if (now.getHours() === 8 && now.getMinutes() === 0) {
+                sendDailyReminder();
+            }
+        }, 60000); // Check every minute
+
+        initSampleData();
+    </script>
+</body>
+</html>
